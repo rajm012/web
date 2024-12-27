@@ -1,0 +1,33 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: skyblue;
+    overscroll-behavior: none;
+}
+
+#content{
+    position: absolute;
+    top: 50%;
+    left : 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+button{
+    cursor: pointer;
+    border: 2px solid rgb(14, 120, 162);
+    padding: 2px 10px 2px 10px;
+    height: 22px;
+    border-radius: 5px;
+    background-color: rgb(14, 120, 162);
+}
+
+button:hover{
+    background-color: rgb(135, 206, 234);
+    color: rgb(6, 6, 9);
+}
+
+button:disabled,
+button:disabled:hover{
+    background-color: gray;
+    cursor: not-allowed;
+}

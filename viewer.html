@@ -9,12 +9,13 @@
     <body>
         <h1>Data Viewer</h1>
         <div id="container"></div>
-        <script src = "../common/js_objects/samples.js"></script>
+        <script src = "../common/js_objects/features.js"></script>
         <script src = "../common/constants.js"></script>
         <script src = "../common/utils.js"></script>
         <script src = "js/display.js"></script>
 
         <script>
+            const {samples, featureNames} = features;
             const grps = utils.groupBy(samples, "student_id");
             for(let student_id in grps){
                 const samples= grps[student_id];

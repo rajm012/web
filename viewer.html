@@ -9,7 +9,9 @@
     <body>
         <h1>Data Viewer</h1>
         
-        <div id="inputContainer"></div>
+        <div id="inputContainer">
+            <div id="predictedLabel"></div>
+        </div>
         <div id="chartContainer"></div>
         <div id="ctrlPanel">
             <button onCLick = "toggleInput()">
@@ -50,8 +52,7 @@
                 axesLabels: featuresNames,
                 styles: utils.styles,
                 transparency: 0.7,
-                // icon: "text"
-                icon: "image"
+                icon: "image",
             };
 
             graphics.generateImages(utils.styles);
@@ -69,12 +70,21 @@
             sketchPad.canvas.style.cssText+= "outline: 10000px solid rgba(0,0,0,0.7);";
             
             function onDrawingUpdate(paths){
-                const point = [
-                    featureFxns.getPathCnt(paths),
-                    featureFxns.getPntCnt(paths)
-                ];
+                const functions = featureFxns.inUse.map(fxn => fxn.function);
+                const point = functions.map(fxn => fxn(paths));
+                const label = classify(point);
+                predictedLabel.innerHTML = 
+                    `Predicted Label: ${label}`;
                 chart.showDynPnt(point);
             }
+
+            function classify(point){
+                const samplePoints = samples.map(s=>s.point);
+                const index = utils.getNearest(point, samplePoints);
+                const nearestSample = samples[index];
+                return nearestSample.label;
+            }
+
         </script>
     </body>
 </html> 

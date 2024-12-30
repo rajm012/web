@@ -36,9 +36,19 @@ class Chart{
       this.dataBounds=this.#getDataBounds();
       this.defaultDataBounds=this.#getDataBounds();
 
+      this.dynPnt=null;
       this.#draw();
 
       this.#addEventListeners();
+   }
+
+   showDynPnt(pnt){
+      this.dynPnt = pnt;
+      this.#draw();
+   }
+   hideDynPnt(){
+      this.dynPnt = null;
+      this.#draw();
    }
 
    #addEventListeners(){
@@ -232,6 +242,20 @@ class Chart{
       if(this.selectedSample){
          this.#emphasizeSample(
             this.selectedSample,"yellow"
+         );
+      }
+
+      if(this.dynPnt){
+         const pixLoc = math.remapPoint(
+            this.dataBounds,
+            this.pixelBounds,
+            this.dynPnt
+         );
+         graphics.drawPoint(
+            ctx, pixLoc, "rgba(255,255,255,0.7)", 10000000
+         );
+         graphics.drawPoint(
+            ctx,pixLoc,"black"
          );
       }
 

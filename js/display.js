@@ -21,6 +21,7 @@ function createRow(container,studentName,samples){
         sampleContainer.appendChild(sampleLabel);
 
         const img=document.createElement('img');
+        img.setAttribute("loading","lazy");
         img.src=constants.IMG_DIR+'/'+id+'.png';
         img.classList.add("thumb");
 
@@ -33,7 +34,7 @@ function createRow(container,studentName,samples){
     }
 }
 
-function handleClick(sample, doScroll){
+function handleClick(sample, doScroll=true){
     if(sample == null){
         [...document.querySelectorAll('.emphasize')].
         forEach((e) => e.classList.remove('emphasize'));
@@ -48,8 +49,8 @@ function handleClick(sample, doScroll){
         return;
     }
 
-    [...document.querySelectorAll('.emphasize')].
-    forEach((e) => e.classList.remove('emphasize'));
+    [...document.querySelectorAll('.emphasize')].forEach((e) => 
+        e.classList.remove('emphasize'));
 
     el.classList.add("emphasize");
 

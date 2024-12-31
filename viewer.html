@@ -21,6 +21,7 @@
         <div id="container"></div>
 
         <script src = "../common/js_objects/features.js"></script>
+        <script src = "../common/js_objects/minMax.js"></script>
         
         <script src = "../common/constants.js"></script>
         <script src = "../common/utils.js"></script>
@@ -36,7 +37,6 @@
         <script src="./chart/chart.js"></script>
 
         <script>
-            
             
             const {samples, featuresNames} = features;
             const grps = utils.groupBy(samples, "student_id");
@@ -72,17 +72,18 @@
             function onDrawingUpdate(paths){
                 const functions = featureFxns.inUse.map(fxn => fxn.function);
                 const point = functions.map(fxn => fxn(paths));
-                const label = classify(point);
+                utils.normalizePoints([point],minMax);
+                const {label, nearestSample} = classify(point);
                 predictedLabel.innerHTML = 
                     `Predicted Label: ${label}`;
-                chart.showDynPnt(point);
+                chart.showDynPnt(point, label, nearestSample);
             }
 
             function classify(point){
                 const samplePoints = samples.map(s=>s.point);
                 const index = utils.getNearest(point, samplePoints);
                 const nearestSample = samples[index];
-                return nearestSample.label;
+                return {label: nearestSample.label, nearestSample};
             }
 
         </script>

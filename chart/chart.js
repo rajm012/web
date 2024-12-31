@@ -36,14 +36,17 @@ class Chart{
       this.dataBounds=this.#getDataBounds();
       this.defaultDataBounds=this.#getDataBounds();
 
-      this.dynPnt=null;
+      this.dynPnt = null;
+      this.nearestSample = null;
+
       this.#draw();
 
       this.#addEventListeners();
    }
 
-   showDynPnt(pnt){
-      this.dynPnt = pnt;
+   showDynPnt(pnt, label, nearestSample){
+      this.dynPnt = {pnt, label};
+      this.nearestSample = nearestSample;
       this.#draw();
    }
    hideDynPnt(){
@@ -216,10 +219,13 @@ class Chart{
       const maxX=Math.max(...x);
       const minY=Math.min(...y);
       const maxY=Math.max(...y);
+      const deltaX = maxX-minX;
+      const deltaY = maxY-minY;
+      const maxDelta = Math.max(deltaX, deltaY);
       const bounds={
          left:minX,
-         right:maxX,
-         top:maxY,
+         right:maxX+ maxDelta,
+         top:maxY+ maxDelta,
          bottom:minY
       };
       return bounds;
@@ -246,16 +252,28 @@ class Chart{
       }
 
       if(this.dynPnt){
-         const pixLoc = math.remapPoint(
+         const {pnt, label} = this.dynPnt;
+         const pixelLoc = math.remapPoint(
             this.dataBounds,
             this.pixelBounds,
-            this.dynPnt
+            pnt
          );
          graphics.drawPoint(
-            ctx, pixLoc, "rgba(255,255,255,0.7)", 10000000
+            ctx, pixelLoc, "rgba(255,255,255,0.7)", 10000000
          );
-         graphics.drawPoint(
-            ctx,pixLoc,"black"
+         
+         ctx.beginPath();
+         ctx.moveTo(...pixelLoc);
+         ctx.lineTo(...math.remapPoint(
+            this.dataBounds,
+            this.pixelBounds,
+            this.nearestSample.point
+         ));
+         ctx.stroke();
+
+         graphics.drawImage(ctx,
+            this.styles[label].image,
+            pixelLoc   
          );
       }
 

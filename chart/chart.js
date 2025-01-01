@@ -37,16 +37,16 @@ class Chart{
       this.defaultDataBounds=this.#getDataBounds();
 
       this.dynPnt = null;
-      this.nearestSample = null;
+      this.nearestSamples = null;
 
       this.#draw();
 
       this.#addEventListeners();
    }
 
-   showDynPnt(pnt, label, nearestSample){
+   showDynPnt(pnt, label, nearestSamples){
       this.dynPnt = {pnt, label};
-      this.nearestSample = nearestSample;
+      this.nearestSamples = nearestSamples;
       this.#draw();
    }
    hideDynPnt(){
@@ -261,16 +261,17 @@ class Chart{
          graphics.drawPoint(
             ctx, pixelLoc, "rgba(255,255,255,0.7)", 10000000
          );
-         
-         ctx.beginPath();
-         ctx.moveTo(...pixelLoc);
-         ctx.lineTo(...math.remapPoint(
-            this.dataBounds,
-            this.pixelBounds,
-            this.nearestSample.point
-         ));
-         ctx.stroke();
-
+         for(const sample of this.nearestSamples){
+            const point = math.remapPoint(
+               this.dataBounds,
+               this.pixelBounds,
+               sample.point
+            );
+            ctx.beginPath();
+            ctx.moveTo(...pixelLoc);
+            ctx.lineTo(...point);
+            ctx.stroke();
+         }
          graphics.drawImage(ctx,
             this.styles[label].image,
             pixelLoc   

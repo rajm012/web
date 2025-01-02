@@ -17,18 +17,21 @@
             <button onCLick = "toggleInput()">
                 Toggle Input 
             </button>
+            <div id="stats"></div>
         </div>
         <div id="container"></div>
 
         <script src = "../common/js_objects/features.js"></script>
+        <script src = "../common/js_objects/training.js"></script>
+        <script src = "../common/js_objects/testing.js"></script>
         <script src = "../common/js_objects/minMax.js"></script>
         
         <script src = "../common/constants.js"></script>
         <script src = "../common/utils.js"></script>
         <script src = "../common/draw.js"></script>
         <script src = "../common/featureFxns.js"></script>
+        <script src = "../common/classifiers/knn.js"></script>
 
-        
         <script src = "js/display.js"></script>
         <script src = "js/sketchPad.js"></script>
         
@@ -39,10 +42,42 @@
         <script>
             
             const {samples, featuresNames} = features;
-            const grps = utils.groupBy(samples, "student_id");
+            const trainingSamples = training.samples;
+            const testingSamples = testing.samples;
 
-            for(let student_id in grps){
-                const samples= grps[student_id];
+            const k = 30;
+            const kNN = new KNN(trainingSamples,k);
+            let corCnt = 0;
+            let totCnt = 0;
+            for(const testSample of  testingSamples){
+                testSample.truth = testSample.label;
+                testSample.label = "?";
+                const {label} = kNN.predict(testSample.point);
+                testSample.label = label;
+                testSample.correct = testSample.truth == testSample.label; 
+                totCnt++;
+                if(testSample.correct) {
+                    corCnt++;
+                }
+            }
+
+            stats.innerHTML = "<b> Accuracy: </b><br>" + corCnt + " / " + totCnt + " = " + 
+                utils.formatPercent(corCnt/totCnt);
+
+            const trainGrp = utils.groupBy(trainingSamples, "student_id");
+            for(let student_id in trainGrp){
+                const samples= trainGrp[student_id];
+                const stu_name = samples[0].student_name;
+                createRow(container, stu_name, samples);
+            }
+
+            const subTitle = document.createElement("h2");
+            subTitle.innerHTML = "Testing Samples";
+            container.appendChild(subTitle);
+
+            const testGrp = utils.groupBy(testingSamples, "student_id");
+            for(let student_id in testGrp){
+                const samples= testGrp[student_id];
                 const stu_name = samples[0].student_name;
                 createRow(container, stu_name, samples);
             }
@@ -53,13 +88,15 @@
                 styles: utils.styles,
                 transparency: 0.7,
                 icon: "image",
+                bg: new Image(),
             };
 
+            options.bg.src = constants.DECISION_BOUNDARY;
             graphics.generateImages(utils.styles);
 
             const chart = new Chart(
                 chartContainer,
-                samples,
+                trainingSamples,
                 options,
                 handleClick
             );
@@ -73,25 +110,10 @@
                 const functions = featureFxns.inUse.map(fxn => fxn.function);
                 const point = functions.map(fxn => fxn(paths));
                 utils.normalizePoints([point],minMax);
-                const {label, nearestSamples} = classify(point);
+                const {label, nearestSamples} = kNN.predict(point);
                 predictedLabel.innerHTML = 
                     `Predicted Label: ${label}`;
                 chart.showDynPnt(point, label, nearestSamples);
-            }
-
-            function classify(point){
-                const samplePoints=samples.map(s=>s.point);
-                const indices=utils.getNearest(point,samplePoints,10);
-                const nearestSamples=indices.map(i=>samples[i]);
-                const labels = nearestSamples.map(s=>s.label);
-                const counts = {};
-                for(const label of labels){
-                    counts[label] = counts[label] ? counts[label]+1 : 1;
-                }
-                const max = Math.max(...Object.values(counts));
-                const label = Object.keys(counts).find(key=>counts[key]===max);
-                // const label = labels.find(l=>counts[l]==max);
-                return {label, nearestSamples};
             }
 
         </script>

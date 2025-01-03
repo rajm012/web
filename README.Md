@@ -1,12 +1,13 @@
-# Drawing Board
+# web
 
-**Drawing Board** is a simple web application that allows users to draw on a canvas and save their drawings as JSON files. This project is built using HTML, CSS, and JavaScript.
+**web** is a simple web application that allows users to draw on a canvas and visualise the other drawing collected for our KNN/other models. This project is built using HTML, CSS, and JavaScript.
 
 ## Features
 
 - Draw on a canvas using mouse events
 - Clear the canvas
-- Download the drawing as a JSON file
+- Visualise all other Images
+- Can also view them on charts
 
 ## Getting Started
 
@@ -18,11 +19,11 @@ To run this project, you need a modern web browser. No additional installations 
 
 1. Clone this repository to your local machine:
     ```sh
-    git clone https://github.com/rajm012/drawing-board.git
+    git clone https://github.com/rajm012/web.git
     ```
 2. Navigate to the project directory:
     ```sh
-    cd drawing-board
+    cd web
     ```
 3. Open the `index.html` file in your web browser to start the application.
 
@@ -38,10 +39,10 @@ To run this project, you need a modern web browser. No additional installations 
 drawing-board/
 │
 ├── index.html    # The main HTML file
+├── viewer.html    # TO visualise all drawings in a Canva
 ├── styles.css    # The CSS file for styling
-└── js            # The JS folder
-    ├── draw.js           # The JavaScript file for drawing functionality
-    └── sketchPad.js      # The JavaScript file for utility functions
+└── js            # The JS folder for other stuffs
+
 ```
 
 ## Code Overview
@@ -49,6 +50,10 @@ drawing-board/
 ### HTML (`index.html`)
 
 The HTML file contains the structure of the application, including the canvas element and buttons.
+
+### HTML (`viewer.html`)
+
+Have code to visualise the image and also to implement KNN.
 
 ### CSS (`styles.css`)
 
